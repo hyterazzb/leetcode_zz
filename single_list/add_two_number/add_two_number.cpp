@@ -12,6 +12,7 @@
 // output  5 > 7 > 9
 #include <iostream>
 #include <stdio.h>
+#include <sys/time.h>
 struct ListNode{
     int val;
     ListNode *next;
@@ -50,11 +51,30 @@ public:
         }
         return head;
     }
+
+    void TimeTIC(void)
+    {
+        struct timeval time_v = {0};
+        gettimeofday(&time_v, NULL);
+        __retina_tic = (double)(time_v.tv_sec * 1000 + time_v.tv_usec / 1000.0);
+    }
+
+    void TimeTOC(const char* func_name)
+    {
+        struct timeval time_v = {0};
+        gettimeofday(&time_v, NULL);
+        __retina_toc = (double)(time_v.tv_sec * 1000 + time_v.tv_usec / 1000.0);
+        printf("%s take %.2f ms\n", func_name, __retina_toc - __retina_tic);
+    }
+private:
+    double __retina_tic = 0.0;                     // 计时，滴
+    double __retina_toc = 0.0;                     // 计时，
 };
 
 int main()
 {
     Solution solution;
+    solution.TimeTIC();
     ListNode *l1_head = nullptr, *l1_end = nullptr;
     l1_head = l1_end = new ListNode(2);
     l1_end->next = new ListNode(4);
@@ -64,6 +84,7 @@ int main()
     l2_end->next = new ListNode(6);
     l2_end->next->next = new ListNode(4);
     ListNode *new_list = solution.AddTwoNumber(l1_head, l2_head);
+    solution.TimeTOC("run");
     while(new_list)
     {
         printf("value:%d\n", new_list->val);
